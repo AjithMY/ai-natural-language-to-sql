@@ -12,7 +12,7 @@
 |---|---|---|---|---|
 | **Phase 1** | Database & Schema Management | SQLAlchemy engine, connection pool, schema inspector, legacy routes | 20 | ✅ Verified |
 | **Phase 2** | Backend Foundation & V1 Architecture | Versioned API router `/api/v1`, Pydantic settings, `X-Request-ID`, CORS | 37 | ✅ Verified |
-| **Phase 3** | Gemini-Based NL-to-SQL Generation | Google GenAI SDK (`gemini-3.6-flash`), schema prompt builder | 49 | ✅ Verified |
+| **Phase 3** | Gemini-Based NL-to-SQL Generation | Google GenAI SDK (`gemini-flash-lite-latest`), schema prompt builder | 49 | ✅ Verified |
 | **Phase 4A** | SQL Validation & Safety | SQLGlot AST validation, read-only SELECT enforcement, anti-injection | 62 | ✅ Verified |
 | **Phase 4B** | Safe SQL Execution | Controlled execution, statement timeouts (30s), row limit (1000) | 58 | ✅ Verified |
 | **Phase 4C** | Query Plan / EXPLAIN Analysis | MySQL EXPLAIN plan extraction, structured row parsing, observations | 71 | ✅ Verified |
@@ -68,7 +68,7 @@ Minor project/
 │   │   └── schema_models.py              # Pydantic schema reflection models (Table, Column, FK)
 │   └── services/
 │       ├── __init__.py                   # Services package marker
-│       ├── gemini_service.py             # Google GenAI client (gemini-3.6-flash), fence stripping
+│       ├── gemini_service.py             # Google GenAI client (gemini-flash-lite-latest), fence stripping
 │       ├── prompt_builder.py             # Converts DatabaseSchema + question into strict prompt
 │       ├── query_generation_service.py   # Orchestrator for schema check, prompt, LLM, validation
 │       ├── schema_availability_service.py # Pre-generation missing table/column detection
@@ -117,7 +117,7 @@ Minor project/
 ## 4. AI & Query Generation Configuration
 
 - **Provider:** Google Gemini via the official `google-genai` SDK.
-- **Configured Model:** `gemini-3.6-flash` (configured in `app/core/config.py` and `.env.example`).
+- **Configured Model:** `gemini-flash-lite-latest` (configured in `app/core/config.py` and `.env.example`).
 - **Prompt Structure:** Live schema metadata injected dynamically into prompts with strict instructions to generate read-only MySQL `SELECT` queries without code fences or conversational prose.
 - **Credential Protection:** `GEMINI_API_KEY` is loaded exclusively from environment variables, never hardcoded, never logged, and redacted from error responses.
 

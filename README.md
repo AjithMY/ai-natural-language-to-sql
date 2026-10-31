@@ -5,7 +5,7 @@
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688)](https://fastapi.tiangolo.com/)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7%2B%20%7C%208.0%2B-4479A1)](https://www.mysql.com/)
 [![SQLGlot](https://img.shields.io/badge/SQLGlot-AST%20Validator-orange)](https://github.com/tobymao/sqlglot)
-[![Google GenAI](https://img.shields.io/badge/Google%20GenAI-gemini--3.6--flash-8E24AA)](https://ai.google.dev/)
+[![Google GenAI](https://img.shields.io/badge/Google%20GenAI-gemini--flash--lite--latest-8E24AA)](https://ai.google.dev/)
 
 An enterprise-grade, secure, and production-ready natural language database interface. Converts human questions into validated MySQL `SELECT` queries, analyzes query plans, proposes non-destructive AST-level optimizations, and benchmarks execution performance via high-resolution timers—presented in an interactive dark-mode dashboard.
 
@@ -74,7 +74,7 @@ This system bridges that gap by providing:
 | **Server** | Uvicorn | ASGI production server |
 | **ORM / Database Driver** | SQLAlchemy 2.0 + PyMySQL | Connection pooling, schema reflection, and transactional safety |
 | **Relational Database** | MySQL 5.7+ / 8.0+ | Underlying persistent data store (`minor_project`) |
-| **AI / LLM** | Google GenAI SDK (`google-genai`) | Natural language to SQL translation using `gemini-3.6-flash` |
+| **AI / LLM** | Google GenAI SDK (`google-genai`) | Natural language to SQL translation using `gemini-flash-lite-latest` |
 | **AST Parser & Validator** | SQLGlot | Statement inspection, dialect parsing, syntax trees, optimization |
 | **Data Validation** | Pydantic v2 + Pydantic-Settings | Request/response model validation and environment variable loading |
 | **Frontend UI** | HTML5, Vanilla CSS3, JavaScript (ES6+) | Modern dark-mode dashboard served statically via FastAPI |
@@ -191,7 +191,7 @@ The system connects to a MySQL database named **`minor_project`**. The schema si
 ## Gemini Integration
 
 - **SDK**: Official Google GenAI SDK (`google-genai`).
-- **Model**: Configured in `app/core/config.py` as **`gemini-3.6-flash`** (configurable via `GEMINI_MODEL` in `.env`).
+- **Model**: Configured in `app/core/config.py` as **`gemini-flash-lite-latest`** (configurable via `GEMINI_MODEL` in `.env`).
 - **Prompt Engineering (`app/services/prompt_builder.py`)**:
   - Injects live table schemas, column names, data types, and foreign key relationships.
   - Enforces strict constraints: generate **only** standard MySQL `SELECT` statements; never output markdown formatting or explanatory text; reference only verified tables and columns.
@@ -360,7 +360,7 @@ Translates a question into SQL. **Does NOT execute the query.**
     "status": "GENERATED",
     "question": "Show the top 5 students with the highest marks",
     "sql": "SELECT name, marks FROM students ORDER BY marks DESC LIMIT 5;",
-    "model": "gemini-3.6-flash",
+    "model": "gemini-flash-lite-latest",
     "validation": {
       "valid": true,
       "sql": "SELECT name, marks FROM students ORDER BY marks DESC LIMIT 5;",
@@ -523,7 +523,7 @@ APP_DEBUG=False
 
 # Google Gemini AI
 GEMINI_API_KEY=your_actual_gemini_api_key_here
-GEMINI_MODEL=gemini-3.6-flash
+GEMINI_MODEL=gemini-flash-lite-latest
 
 # Execution Guardrails
 SQL_MAX_ROWS=1000
@@ -541,7 +541,7 @@ SQL_QUERY_TIMEOUT_SECONDS=30
 | `DB_PASSWORD` | *(empty)* | Database user password |
 | `CORS_ORIGINS` | `http://localhost:8000` | Allowed origins for browser requests |
 | `GEMINI_API_KEY` | *(required)* | Google Gemini API key from AI Studio |
-| `GEMINI_MODEL` | `gemini-3.6-flash` | Gemini model name |
+| `GEMINI_MODEL` | `gemini-flash-lite-latest` | Gemini model name |
 | `SQL_MAX_ROWS` | `1000` | Maximum rows returned per query execution |
 | `SQL_QUERY_TIMEOUT_SECONDS` | `30` | Per-statement execution timeout in seconds |
 
