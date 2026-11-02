@@ -2,6 +2,8 @@
 .env
 .env*.local
 *.env
+*.bak
+
 
 # Python
 __pycache__/
@@ -31,7 +33,12 @@ htmlcov/
 # Logs and temporary files
 *.log
 
+# Large Datasets
+data/
+*.sql.gz
+
 # OS
 .DS_Store
 Thumbs.db
+
 

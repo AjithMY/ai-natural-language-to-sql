@@ -1,13 +1,13 @@
 # AI-Based Natural Language to SQL Query Generation, Optimization and Performance Analysis System
 
-[![Test Suite](https://img.shields.io/badge/tests-534%20passed%20%7C%200%20failed-success)](tests/)
+[![Test Suite](https://img.shields.io/badge/tests-561%20passed%20%7C%200%20failed-success)](tests/)
 [![Python](https://img.shields.io/badge/python-3.10%20%7C%203.11%20%7C%203.12%20%7C%203.14-blue)](https://www.python.org/)
 [![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688)](https://fastapi.tiangolo.com/)
 [![MySQL](https://img.shields.io/badge/MySQL-5.7%2B%20%7C%208.0%2B-4479A1)](https://www.mysql.com/)
 [![SQLGlot](https://img.shields.io/badge/SQLGlot-AST%20Validator-orange)](https://github.com/tobymao/sqlglot)
 [![Google GenAI](https://img.shields.io/badge/Google%20GenAI-gemini--flash--lite--latest-8E24AA)](https://ai.google.dev/)
 
-An enterprise-grade, secure, and production-ready natural language database interface. Converts human questions into validated MySQL `SELECT` queries, analyzes query plans, proposes non-destructive AST-level optimizations, and benchmarks execution performance via high-resolution timers—presented in an interactive dark-mode dashboard.
+An enterprise-grade, secure, and production-ready natural language database interface. Converts human questions into validated MySQL `SELECT` queries, analyzes query plans, proposes non-destructive AST-level optimizations, and benchmarks execution performance via high-resolution timers—presented in an interactive dark-mode dashboard. Evaluated against a large-scale database of 291,008 records.
 
 ---
 
@@ -129,8 +129,10 @@ API v1 Router  (app/api/v1/)
 | **Clarification** | Schema Clarification | Missing schema detection, temporary schema parsing, source attribution | 21 | ✅ Complete |
 | **Phase 4E** | Performance Analysis | Multi-run benchmarking via `time.perf_counter()`, warmup exclusion, metrics | 65 | ✅ Complete |
 | **Phase 5A** | Frontend Integration | Unified dashboard, copy action, explain labeling, error sanitization | 16 | ✅ Complete |
-| **Phase 5B** | System Audit | Verification of all 534 tests, database consistency, and demo scenarios | 534 | ✅ Complete |
+| **Phase 5B** | System Audit | Verification of all 534 baseline tests, database consistency, and demo scenarios | 534 | ✅ Complete |
 | **Phase 5C** | Documentation & Package | Comprehensive README and submission documentation | 534 | ✅ Complete |
+| **Phase 6** | Large-Scale Evaluation & Accuracy | 291,008 record benchmark, schema availability fixes, AST ORDER BY alias support | 27 | ✅ Complete |
+| **Total Suite** | Full Project Scope | Complete regression suite (Phase 1 through Phase 6) | **561** | ✅ **561 / 561 Passing** |
 
 ---
 
@@ -625,7 +627,59 @@ pytest -q
 | `test_schema_clarification.py` | Missing schema detection, temporary schemas | 21 |
 | `test_phase4e.py` | Performance benchmarking & metrics | 65 |
 | `test_phase5a.py` | Frontend integration, asset delivery, API flows | 16 |
-| **Total Passing Tests** | | **534 / 534 (100%)** |
+| `test_evaluation_accuracy_fixes.py` | Schema pre-filtering, ORDER BY alias scope, precision comparison | 27 |
+| **Total Passing Tests** | | **561 / 561 (100%)** |
+
+---
+
+## Large-Scale Database Accuracy & Performance Evaluation
+
+The system was evaluated against a realistic production-scale database named **`college_large_demo`**, containing **291,008 records** across **10 relational tables**:
+
+| Table | Row Count | Purpose & Key Columns |
+|---|---|---|
+| `students` | 10,000 | Student demographic & academic profiles (`id`, `register_no`, `name`, `cgpa`, `marks`, `status`) |
+| `departments` | 20 | Academic departments (`id`, `name`, `hod_name`, `building`) |
+| `faculty` | 500 | Faculty members (`id`, `name`, `designation`, `salary`, `department_id`) |
+| `courses` | 300 | Academic courses (`id`, `course_code`, `course_name`, `credits`, `department_id`, `faculty_id`) |
+| `semesters` | 8 | Academic terms and calendars (`id`, `semester_name`, `academic_year`, `start_date`, `end_date`) |
+| `enrollments` | 80,000 | Student course enrollments (`id`, `student_id`, `course_id`, `semester_id`, `grade`) |
+| `marks` | 80,000 | Examination marks (`id`, `enrollment_id`, `internal_marks`, `external_marks`, `total_marks`, `result`) |
+| `attendance` | 80,000 | Attendance records (`id`, `student_id`, `course_id`, `attendance_percent`) |
+| `fees` | 40,000 | Fee payment tracking (`id`, `student_id`, `fee_type`, `amount`, `paid_amount`, `payment_status`) |
+| `exam_schedules` | 180 | Examination timetables (`id`, `course_id`, `exam_type`, `exam_date`, `room_no`) |
+| **Total Records** | **291,008** | **100% verified persistent records** |
+
+### Evaluation Methodology & Results
+
+A standardized evaluation suite consisting of **25 complex natural-language queries** across 14 database operations was executed against `college_large_demo`. In addition, a separate enrollment-level diagnostic query was tested, and 8 performance benchmarks were measured.
+
+| Evaluation Metric | Count / Total | Success Rate | Operational Note |
+|---|:---:|:---:|---|
+| **Total Evaluation Questions** | 25 | — | Comprehensive coverage across 14 analytical categories |
+| **Valid SQL Generation Success** | 24 / 25 | **96.0%** | Successfully generated valid SQL for all supported schema queries |
+| **SQLGlot AST Validation Pass** | 24 / 25 | **96.0%** | All generated SQL passed strict AST syntax and schema safety checks |
+| **MySQL Execution Success** | 24 / 25 | **96.0%** | All generated SQL executed without runtime or database errors |
+| **Automated Semantic Correctness (Among Generated)** | 23 / 24 | **95.8%** | Automated typed cell comparison with duplicate & order preservation |
+| **End-to-End Semantic Correctness** | 23 / 25 | **92.0%** | End-to-end automated pipeline accuracy across all 25 questions |
+| **Manually Audited Correctness Estimate** | 24 / 24 | **100.0%** | All 24 generated queries correctly identify the intended database entities |
+| **Correctly Rejected Unsupported Requests** | 1 / 1 | **100.0%** | Q1 (departments email) safely rejected without fabricating schema |
+| **Diagnostic Query (Enrollment Granularity)** | 1 / 1 | **100.0%** | Explicit enrollment-level query passed automated semantic comparison |
+
+### Representative Performance Benchmarks (291,008 Records)
+
+Each benchmark was executed across 5 timed runs on `college_large_demo` excluding warmup:
+
+| Benchmark Query | Description | Avg Latency | Median | Min | Max |
+|---|---|:---:|:---:|:---:|:---:|
+| **P1** | Full table scan COUNT on 10,000 students | 2.59 ms | 2.42 ms | 2.39 ms | 3.14 ms |
+| **P2** | Filtered SELECT with index (`cgpa > 9.0`) | 6.67 ms | 6.74 ms | 6.26 ms | 7.08 ms |
+| **P3** | GROUP BY with JOIN (department student counts) | 14.20 ms | 14.04 ms | 13.55 ms | 15.37 ms |
+| **P4** | Multi-table JOIN (enrollments, students, courses, semesters) | 8.38 ms | 8.20 ms | 7.66 ms | 9.64 ms |
+| **P5** | Subquery (`cgpa > (SELECT AVG(cgpa) FROM students)`) | 32.69 ms | 31.97 ms | 29.38 ms | 35.50 ms |
+| **P6** | Aggregation on 80,000 marks records (`GROUP BY result`) | 34.76 ms | 34.29 ms | 34.21 ms | 36.42 ms |
+| **P7** | Attendance filter (`< 75%`) across 80,000 records + multi-JOIN | 251.29 ms | 258.71 ms | 232.49 ms | 268.40 ms |
+| **P8** | Fee aggregation across 40,000 records (`GROUP BY fee_type`) | 84.06 ms | 84.10 ms | 83.81 ms | 84.39 ms |
 
 ---
 

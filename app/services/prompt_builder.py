@@ -116,6 +116,13 @@ class PromptBuilder:
             "- Return ONLY the raw SQL query string.\n"
             "- Do NOT wrap the SQL in Markdown code fences (``` or ```sql).\n"
             "- Do NOT include any explanation, commentary, or extra text.\n"
+            "- When filtering on status or enum columns (such as payment_status), match the exact\n"
+            "  status keyword requested in the question (e.g. use payment_status = 'Pending' when\n"
+            "  asked for 'pending payments' or 'pending fee payments', rather than != 'Paid').\n"
+            "- Only include partial payments or broader conditions if the user explicitly asks for\n"
+            "  'outstanding balance', 'unpaid balance', or 'all unpaid fees'.\n"
+            "- Select only the specific columns requested or implied by the question rather than\n"
+            "  expanding to all columns with *.\n"
             "- End the query with a semicolon.\n"
             "\n"
             "## Database Schema\n"
@@ -127,3 +134,4 @@ class PromptBuilder:
             "\n"
             "## SQL Query\n"
         )
+

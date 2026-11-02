@@ -327,6 +327,52 @@ class SQLValidatorService:
                     for t in referenced_tables
                 )
                 if not found:
+                    if self._is_valid_order_by_alias(col_node):
+                        continue
                     errors.append(
                         f"Column '{col_node.name}' does not exist in any referenced table."
                     )
+
+    def _is_valid_order_by_alias(self, col_node: exp.Column) -> bool:
+        """Check if an unqualified column in an ORDER BY matches a SELECT alias in scope."""
+        in_order = False
+        enclosing_scope: exp.Select | exp.Union | None = None
+
+        curr: Any = col_node.parent
+        while curr:
+            if isinstance(curr, (exp.Order, exp.Ordered)):
+                in_order = True
+            elif isinstance(curr, (exp.Select, exp.Union)):
+                enclosing_scope = curr
+                break
+            curr = curr.parent
+
+        if not in_order or enclosing_scope is None:
+            return False
+
+        # Collect SELECT aliases in the enclosing query block
+        aliases = self._get_select_aliases(enclosing_scope)
+        col_name = col_node.name.strip("`").strip('"').lower()
+        return col_name in aliases
+
+    def _get_select_aliases(self, scope: exp.Select | exp.Union) -> set[str]:
+        """Extract all lowercase aliases defined in the SELECT list of scope."""
+        aliases: set[str] = set()
+
+        if isinstance(scope, exp.Select):
+            for expr in scope.expressions:
+                if isinstance(expr, exp.Alias):
+                    alias_name = expr.alias or expr.name
+                    if alias_name:
+                        aliases.add(alias_name.strip("`").strip('"').lower())
+        elif isinstance(scope, exp.Union):
+            # For a compound UNION statement, ORDER BY can reference aliases from the unioned SELECTs
+            for select_stmt in scope.find_all(exp.Select):
+                for expr in select_stmt.expressions:
+                    if isinstance(expr, exp.Alias):
+                        alias_name = expr.alias or expr.name
+                        if alias_name:
+                            aliases.add(alias_name.strip("`").strip('"').lower())
+
+        return aliases
+

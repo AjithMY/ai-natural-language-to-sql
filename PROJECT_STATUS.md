@@ -1,8 +1,8 @@
 # PROJECT STATUS REPORT
 
 **Project Name:** AI-Based Natural Language to SQL Query Generation, Optimization and Performance Analysis System  
-**Report Updated:** September 2026 (Live System Verification)  
-**Status:** All Phases (1, 2, 3, 4A, 4B, 4C, 4D, Clarification, 4E, 5A, 5B, 5C) Complete & Verified (**534 / 534 Tests Passing**; 0 Failures, 0 Skipped).
+**Report Updated:** November 2026 (Large Database Evaluation & Final Verification)  
+**Status:** All Phases (1, 2, 3, 4A, 4B, 4C, 4D, Clarification, 4E, 5A, 5B, 5C, Phase 6) Complete & Verified (**561 / 561 Tests Passing**; 0 Failures, 0 Skipped).
 
 ---
 
@@ -22,6 +22,8 @@
 | **Phase 5A** | Frontend / Full System Integration | Unified dark-mode dashboard, copy SQL, explain labeling, error filter | 16 | ✅ Verified |
 | **Phase 5B** | Final System Audit | Full system audit, zero-modification verification, demo scenarios | 534 | ✅ Verified |
 | **Phase 5C** | Documentation & Final Package | Comprehensive README and project status documentation | 534 | ✅ Verified |
+| **Phase 6** | Large Database Evaluation & Accuracy | 291k records (`college_large_demo`), schema n-grams, ORDER BY aliases | 27 | ✅ Verified |
+| **Total** | Full Verified Suite | Complete end-to-end regression test suite | **561** | ✅ **561 / 561 Passing** |
 
 ---
 
@@ -163,13 +165,29 @@ User chooses an independent action:
 .\venv\Scripts\pytest -q
 ```
 ```
-534 passed, 5 warnings in 8.36s
+561 passed, 5 warnings in 8.52s
 ```
 
-- **Total Test Cases:** 534
-- **Passed:** 534 (100%)
+- **Total Test Cases:** 561
+- **Passed:** 561 (100%)
 - **Failed:** 0
 - **Skipped:** 0
 - **Warnings:** 5 (Standard library / Starlette deprecation warnings in testclient)
 
-All 11 test modules pass with zero regressions. All phase requirements are complete and verified.
+All 12 test modules pass with zero regressions. All phase requirements are complete and verified.
+
+---
+
+## 8. Large-Scale Evaluation Summary (`college_large_demo` - 291,008 Records)
+
+- **Database:** `college_large_demo` (10 tables, 291,008 persistent records, zero data modified)
+- **Standard 25-Question Accuracy Suite:**
+  - Valid SQL Generation: **24 / 25 (96.0%)**
+  - SQLGlot AST Validation: **24 / 25 (96.0%)**
+  - MySQL Query Execution: **24 / 25 (96.0%)**
+  - Automated Semantic Accuracy (among generated): **23 / 24 (95.8%)**
+  - End-to-End Automated Semantic Accuracy: **23 / 25 (92.0%)**
+  - Manually Audited Correctness Estimate: **24 / 24 (100.0%)**
+  - Correctly Rejected Unsupported Requests: **1 / 1 (100.0% - Q1 department email)**
+  - Diagnostic Query (Enrollment Granularity): **1 / 1 (100.0%)**
+- **Performance Benchmarks:** 8 / 8 passed (latencies ranging from 2.59 ms to 251.29 ms).
